@@ -5,7 +5,7 @@ function starts_with($haystack, $needle) {
 }
 
 $domain = $_SERVER["HTTP_HOST"] ? $_SERVER["HTTP_HOST"] : $_SERVER["SERVER_NAME"];
-$base = "http://$domain";
+$base = "https://$domain";
 $draftsite = $draft = starts_with($domain, "draft.");
 $draft = true; // FlaggedRevs is disabled
 
@@ -47,7 +47,7 @@ function page_get_stable($title, $encoded=false) {
 		return 0;
 	if ( !$encoded )
 		$title = urlencode($title);
-	$q = unserialize(file_get_contents("http://wiki.commonjs.org/api.php?action=query&prop=flagged&titles={$title}&format=php"));
+	$q = unserialize(file_get_contents("https://wiki.commonjs.org/api.php?action=query&prop=flagged&titles={$title}&format=php"));
 	$q = $q["query"]["pages"];
 	$q = reset($q);
 	if ( !@$q["flagged"] )
@@ -59,7 +59,7 @@ function page_get_stable($title, $encoded=false) {
 function page_get_contents($title) {
 	global $draft, $clearcache;
 	$title = urlencode($title);
-	/*$q = unserialize(file_get_contents("http://wiki.commonjs.org/api.php?action=query&prop=revisions&titles={$title}&rvprop=content&format=php"));
+	/*$q = unserialize(file_get_contents("https://wiki.commonjs.org/api.php?action=query&prop=revisions&titles={$title}&rvprop=content&format=php"));
 	$q = $q["query"]["pages"];
 	$q = reset($q);
 	$q = $q["revisions"];
@@ -75,7 +75,7 @@ function page_get_contents($title) {
 	}
 	if ( $content === false ) {
 		$stableid = page_get_stable($title, true);
-		$url = "http://wiki.commonjs.org/index.php?title={$title}&oldid=$stableid&action=raw";
+		$url = "https://wiki.commonjs.org/index.php?title={$title}&oldid=$stableid&action=raw";
 		header("X-Page-Source: $url", false);
 		$content = @file_get_contents($url);
 		if ( $content === false )
@@ -101,7 +101,7 @@ function page_get_rendered($title) {
 		$stableid = page_get_stable($title, true);
 		if ( $draft || $stableid !== 0 ) {
 			// Outside of drafts we only accept pages that have been reviewed, if stableid is 0 then pretend it was a 404
-			$url = "http://wiki.commonjs.org/index.php?title={$title}&oldid=$stableid&action=render";
+			$url = "https://wiki.commonjs.org/index.php?title={$title}&oldid=$stableid&action=render";
 			header("X-Page-Source: $url", false);
 			$content = @file_get_contents($url); // @todo Perhaps we can replace oldid with stable=1 when we upgrade
 		} else {
@@ -116,7 +116,7 @@ function page_get_rendered($title) {
 
 	$content = preg_replace('#<div id=\'mw-revisiontag-old\'(?:.+?)>(?:.+?)</div>#', "", $content);
 	$content = preg_replace('#<span class="editsection">\[<a(?:.+?)>edit</a>\]</span>\s*#', "", $content);
-	$content = preg_replace("#http://wiki.commonjs.org/wiki/Website:Index(/[^\s\"'<>]+)?#", "$base\$1/", $content);
+	$content = preg_replace("#https?://wiki.commonjs.org/wiki/Website:Index(/[^\s\"'<>]+)?#", "$base\$1/", $content);
 	if ( !$draft )
 		$content = preg_replace('#\s+rel="nofollow"#', "", $content);
 
@@ -205,7 +205,7 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30 * 60));
 <title>CommonJS: JavaScript Standard Library</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <?php if ( $draft ) { ?><meta name="robots" content="noindex,nofollow"><?php } ?>
-<link rel=edit title="Edit" href="http://wiki.commonjs.org/index.php?title=<?php echo urlencode($wiki_title); ?>&amp;action=edit" />
+<link rel=edit title="Edit" href="https://wiki.commonjs.org/index.php?title=<?php echo urlencode($wiki_title); ?>&amp;action=edit" />
 <link href="/style.css" rel="stylesheet" type="text/css">
 </head>
 <body class="<?php echo $s404 ? 'status404' : (starts_with($path, '/impl/') ? 'impl' : (starts_with($path, '/specs/') ? 'specs' : '')); ?>">
@@ -218,7 +218,7 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30 * 60));
       <div class="nav_item nav1"><a href="/specs/">spec</a></div>
       <div class="nav_div"></div>
     </div>
-    <a href="/"><img border="0" class="logo" src="http://wiki.commonjs.org/images/3/3a/Website-Logo.png" alt="CommonJS"></a>
+    <a href="/"><img border="0" class="logo" src="https://wiki.commonjs.org/images/3/3a/Website-Logo.png" alt="CommonJS"></a>
     <div class="tagline">javascript: not just for browsers any more!</div>
   </div>
 </div>
@@ -236,7 +236,7 @@ header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 30 * 60));
   </div>
 </div>
 <div class="footer_wrapper">Copyright © 2009 - Kevin Dangoor and many <a href="/contributors/">CommonJS contributors</a>, licensed under a <a href="/license/">MIT license</a>.
-Website backend and wiki managed and hosted by <a href="http://danielfriesen.name/">Daniel Friesen</a>.
+Website backend and wiki managed and hosted by <a href="https://danf.ca/">Daniel Friesen</a>.
 </div>
 <!-- <script type="text/javascript">
 
